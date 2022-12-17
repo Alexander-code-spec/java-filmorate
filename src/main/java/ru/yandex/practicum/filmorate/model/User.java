@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
-import java.util.Date;
+
 
 @Data
 @Builder
@@ -20,7 +20,7 @@ public class User {
     private String email;
     @NotBlank
     private String login;
-    private String name = "common";
+    private String name;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Past(message = "Input valid birthdate")

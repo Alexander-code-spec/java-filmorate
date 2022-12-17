@@ -30,7 +30,7 @@ public class UserController {
             log.debug("Возникла ошибка при валдиации объекта: {}", user);
             throw new ValidationException("Ошибка валидации");
         }
-        if(user.getName().isEmpty()) {
+        if(user.getName() == null || user.getName().isBlank()){
             user.setName(user.getLogin());
         }
         this.usersId += 1;
