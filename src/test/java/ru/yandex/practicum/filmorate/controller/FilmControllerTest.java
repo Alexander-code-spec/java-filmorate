@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.BindingResultUtils;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -58,7 +60,7 @@ class FilmControllerTest {
     @Test
     void create() throws Exception {
         filmController.create(goodFilm);
-        assertEquals(filmController.getFilms().size(), 1, "Валидация выполнется некорректно");
+        assertEquals(filmController.findAll().size(), 1, "Валидация выполнется некорректно");
         String expectedMessage = "Ошибка валидации";
 
         Exception exception = assertThrows(ValidationException.class, () -> {
@@ -71,17 +73,17 @@ class FilmControllerTest {
     @Test
     void update() throws Exception {
         filmController.create(goodFilm);
-        assertEquals(filmController.getFilms().size(), 1, "Валидация выполнется некорректно");
+        assertEquals(filmController.findAll().size(), 1, "Валидация выполнется некорректно");
 
         filmController.update(Film.builder().id(1).name("Terminator2")
                 .description("Very Good film")
                 .duration(130)
                 .releaseDate(LocalDate.of(1983, 5, 23)).build());
 
-        assertEquals(filmController.getFilms().get(1).getName(),
+        assertEquals(filmController.findAll().get(1).getName(),
                 "Terminator2",
                 "Валидация выполнется некорректно");
-        assertEquals(filmController.getFilms().get(1).getDescription(),
+        assertEquals(filmController.findAll().get(1).getDescription(),
                 "Very Good film",
                 "Валидация выполнется некорректно");
     }

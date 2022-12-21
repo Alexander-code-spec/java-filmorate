@@ -14,44 +14,35 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Slf4j
-public class UserController {
+public class UserController extends AbstractController<User> {
     private HashMap<Integer, User> users = new HashMap<>();
     private Integer usersId = 0;
 
     @GetMapping
     public List<User> findAll() {
+        log.debug("Текущее количество пользователей: {}", users.size());
         return new ArrayList<>(users.values());
     }
 
     @PostMapping
     @Validated
     public User create(@RequestBody @Valid  User user) throws ValidationException {
-        if(users.containsKey(user.getId()) || user.getLogin().contains(" ")) {
-            log.debug("Возникла ошибка при валдиации объекта: {}", user);
-            throw new ValidationException("Ошибка валидации");
+        if(user.getLogin().contains(" ")) {
+                log.debug("Возникла ошибка при валдиации объекта: {}", user);
+                throw new ValidationException("Логин не должен содержать пробелы!");
         }
-        if(user.getName() == null || user.getName().isBlank()){
+        if(user.getName() == null || user.getName().isEmpty()){
             user.setName(user.getLogin());
         }
         this.usersId += 1;
         user.setId(usersId);
-        users.put(user.getId(), user);
-        log.debug("Добавлен новый Пользователь: {}", user);
-        return user;
+        valid(user, user.getId(), users, true);
+        return abstractCreate(user, users, user.getId());
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user) throws ValidationException {
-        if(!users.containsKey(user.getId())) {
-            throw new ValidationException("Пользователь не существует");
-        }
-
-        users.put(user.getId(), user);
-        log.debug("Изменен пользователь с id: {}", user);
-        return user;
-    }
-
-    public HashMap<Integer, User> getUsers() {
-        return users;
+    public User update(@Valid @RequestBody User user) {
+        valid(user, user.getId(), users, false);
+        return abstractCreate(user, users, user.getId());
     }
 }

@@ -77,10 +77,10 @@ class UserControllerTest {
                 .email("asdfgqwe@gmail.com")
                 .birthday(LocalDate.of(1978, 5, 23)).build());
 
-        assertEquals(userController.getUsers().get(1).getName(),
+        assertEquals(userController.findAll().get(1).getName(),
                 "Alexey",
                 "Валидация выполнется некорректно");
-        assertEquals(userController.getUsers().get(1).getEmail(),
+        assertEquals(userController.findAll().get(1).getEmail(),
                 "asdfgqwe@gmail.com",
                 "Валидация выполнется некорректно");
     }

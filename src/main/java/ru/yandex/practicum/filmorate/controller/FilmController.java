@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.hibernate.validator.internal.metadata.aggregated.rule.OverridingMethodMustNotAlterParameterConstraints;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-public class FilmController {
+public class FilmController extends AbstractController<Film>{
     private HashMap<Integer, Film> films = new HashMap<>();
     private Integer filmId = 0;
 
@@ -28,32 +29,24 @@ public class FilmController {
 
     @PostMapping
     public Film create(@RequestBody @Valid  Film film) throws ValidationException {
-        if(films.containsKey(film.getId())||
-                film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if(film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.debug("Возникла ошибка при валдиации объекта: {}", film);
-            throw new ValidationException("Ошибка валидации");
+            throw new ValidationException("Неверно задана дата выпуска фильма!");
         }
         this.filmId +=1;
         film.setId(filmId);
-        films.put(film.getId(), film);
-        log.debug("Добавлен новый фильм: {}", film);
-        return film;
+        valid(film, film.getId(), films, true);
+        return abstractCreate(film, films, film.getId());
     }
 
     @PutMapping
     @Validated
     public Film update(@Valid @RequestBody Film film) throws ValidationException {
-        if(!films.containsKey(film.getId()) ||
-                film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if(film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.debug("Возникла ошибка при валдиации объекта: {}", film);
-            throw new ValidationException("Ошибка валидации");
+            throw new ValidationException("Неверно задана дата выпуска фильма!");
         }
-        films.put(film.getId(), film);
-        log.debug("Изменен фильм с id = {}", film.getId());
-        return film;
-    }
-
-    public HashMap<Integer, Film> getFilms() {
-        return films;
+        valid(film, film.getId(), films, false);
+        return abstractCreate(film, films, film.getId());
     }
 }
