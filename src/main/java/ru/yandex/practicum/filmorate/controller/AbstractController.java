@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ public abstract class AbstractController<T> {
     public void valid(T obj,
                       Integer id,
                       HashMap<Integer, T> map,
-                      boolean create){
+                      boolean create) throws ValidationException {
         Optional<T> optionalObj = Optional.ofNullable(obj);
 
         if(optionalObj.isPresent()) {
@@ -33,7 +33,7 @@ public abstract class AbstractController<T> {
                 throw new ValidationException("Невозможно онбовить данные объекта с id = " + id +
                         ", такого объекта не сущесвтует");
             } else if (create && map.containsKey(id)){
-                throw new ValidationException("Объект с id = {} уже сущесвтует");
+                throw new ValidationException("Объект с id = " + id + " уже сущесвтует");
             }
         }  else {
             throw new ValidationException("Object not present!");

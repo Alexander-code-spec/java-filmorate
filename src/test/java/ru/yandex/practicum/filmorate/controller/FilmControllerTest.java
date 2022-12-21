@@ -61,10 +61,10 @@ class FilmControllerTest {
     void create() throws Exception {
         filmController.create(goodFilm);
         assertEquals(filmController.findAll().size(), 1, "Валидация выполнется некорректно");
-        String expectedMessage = "Ошибка валидации";
+        String expectedMessage = "Объект с id = " + 1 + " уже сущесвтует";
 
         Exception exception = assertThrows(ValidationException.class, () -> {
-            filmController.create(badDateFilm);
+            filmController.create(goodFilm);
         });
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
@@ -80,10 +80,10 @@ class FilmControllerTest {
                 .duration(130)
                 .releaseDate(LocalDate.of(1983, 5, 23)).build());
 
-        assertEquals(filmController.findAll().get(1).getName(),
+        assertEquals(filmController.getFilms().get(1).getName(),
                 "Terminator2",
                 "Валидация выполнется некорректно");
-        assertEquals(filmController.findAll().get(1).getDescription(),
+        assertEquals(filmController.getFilms().get(1).getDescription(),
                 "Very Good film",
                 "Валидация выполнется некорректно");
     }

@@ -33,9 +33,9 @@ public class FilmController extends AbstractController<Film>{
             log.debug("Возникла ошибка при валдиации объекта: {}", film);
             throw new ValidationException("Неверно задана дата выпуска фильма!");
         }
+        valid(film, film.getId(), films, true);
         this.filmId +=1;
         film.setId(filmId);
-        valid(film, film.getId(), films, true);
         return abstractCreate(film, films, film.getId());
     }
 
@@ -48,5 +48,9 @@ public class FilmController extends AbstractController<Film>{
         }
         valid(film, film.getId(), films, false);
         return abstractCreate(film, films, film.getId());
+    }
+
+    public HashMap<Integer, Film> getFilms() {
+        return films;
     }
 }

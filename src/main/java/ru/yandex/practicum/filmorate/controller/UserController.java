@@ -34,15 +34,19 @@ public class UserController extends AbstractController<User> {
         if(user.getName() == null || user.getName().isEmpty()){
             user.setName(user.getLogin());
         }
+        valid(user, user.getId(), users, true);
         this.usersId += 1;
         user.setId(usersId);
-        valid(user, user.getId(), users, true);
         return abstractCreate(user, users, user.getId());
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user) {
+    public User update(@Valid @RequestBody User user) throws ValidationException {
         valid(user, user.getId(), users, false);
         return abstractCreate(user, users, user.getId());
+    }
+
+    public HashMap<Integer, User> getUsers() {
+        return users;
     }
 }
