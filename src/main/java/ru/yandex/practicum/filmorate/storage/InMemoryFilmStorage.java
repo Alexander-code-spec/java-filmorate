@@ -18,6 +18,8 @@ public class InMemoryFilmStorage extends AbstractStorage implements FilmStorage 
         if(film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.debug("Возникла ошибка при валдиации объекта: {}", film);
             throw new ValidationException("Неверно задана дата выпуска фильма!");
+        } else if (getMap().keySet().contains(film.getId())) {
+            throw new ValidationException("Объект с id = " + film.getId() + " уже сущесвтует");
         }
         this.filmId +=1;
         film.setId(filmId);
