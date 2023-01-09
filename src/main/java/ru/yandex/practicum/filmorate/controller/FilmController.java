@@ -1,15 +1,16 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.hibernate.validator.internal.metadata.aggregated.rule.OverridingMethodMustNotAlterParameterConstraints;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,40 +18,56 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-public class FilmController extends AbstractController<Film>{
-    private HashMap<Integer, Film> films = new HashMap<>();
-    private Integer filmId = 0;
+@RequiredArgsConstructor
+public class FilmController{
+    private final FilmService filmService;
 
     @GetMapping
     public List<Film> findAll() {
-        log.debug("Текущее количество фильмов: {}", films.size());
-        return new ArrayList<>(films.values());
+        return filmService.getFilmStorage().findAll();
+    }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public Film getEmployeesById(@PathVariable("id") Integer id) {
+        if(!filmService.getFilmStorage().getMap().containsKey(id)){
+            throw new ObjectNotFoundException("Пользователь не существует!");
+        }
+        return (Film) filmService.getFilmStorage().getMap().get(id);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    @ResponseBody
+    public Film putLike(@PathVariable("id") Integer id, @PathVariable() Integer userId) {
+        return filmService.putLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    @ResponseBody
+    public List<Film> getTopFilms(@RequestParam(defaultValue = "10", required = false) Integer count) {
+        if (count < 0) {
+            throw new IncorrectParameterException("count");
+        }
+        return filmService.getTopMovies(count);
     }
 
     @PostMapping
     public Film create(@RequestBody @Valid  Film film) throws ValidationException {
-        if(film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.debug("Возникла ошибка при валдиации объекта: {}", film);
-            throw new ValidationException("Неверно задана дата выпуска фильма!");
-        }
-        valid(film, film.getId(), films, true);
-        this.filmId +=1;
-        film.setId(filmId);
-        return abstractCreate(film, films, film.getId());
+        return filmService.getFilmStorage().create(film);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public Film deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId){
+        return filmService.removeLike((Film) filmService.getFilmStorage().getMap().get(id), userId);
     }
 
     @PutMapping
     @Validated
     public Film update(@Valid @RequestBody Film film) throws ValidationException {
-        if(film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.debug("Возникла ошибка при валдиации объекта: {}", film);
-            throw new ValidationException("Неверно задана дата выпуска фильма!");
-        }
-        valid(film, film.getId(), films, false);
-        return abstractCreate(film, films, film.getId());
+        return filmService.getFilmStorage().update(film);
     }
 
     public HashMap<Integer, Film> getFilms() {
-        return films;
+        return filmService.getFilmStorage().getMap();
     }
 }

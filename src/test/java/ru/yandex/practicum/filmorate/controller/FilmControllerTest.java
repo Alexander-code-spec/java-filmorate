@@ -7,6 +7,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.BindingResultUtils;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -28,7 +30,7 @@ class FilmControllerTest {
 
     @BeforeEach
     public void before(){
-        filmController = new FilmController();
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorage()));
     }
 
     @BeforeAll

@@ -1,15 +1,21 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Film {
     private int id;
@@ -22,4 +28,6 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Отрицательная продолжительность")
     private int duration;
+    @Builder.Default
+    private Set<Long> likes = new HashSet<>();
 }
