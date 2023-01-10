@@ -16,21 +16,21 @@ public abstract class AbstractStorage<T> {
     private HashMap<Integer, T> map = new HashMap<>();
     private Integer id = 0;
 
-    public T abstractCreate(T obj, Integer id) throws ValidationException {
+    public T Create(T obj, Integer id) throws ValidationException {
         valid(obj, id, true);
         map.put(id, obj);
         log.debug("Создан новый объект: {}", obj);
         return obj;
     }
 
-    public T abstractUpdate(T obj, Integer id) throws ValidationException {
+    public T update(T obj, Integer id) throws ValidationException {
         valid(obj, id, false);
         map.put(id, obj);
         log.debug("Изменен объект: {}", obj);
         return obj;
     }
 
-    public List<T> abstractFindAll(String objType) {
+    public List<T> find(String objType) {
         log.debug("Текущее количество " + objType + " : {}", map.size());
         return new ArrayList<>(map.values());
     }

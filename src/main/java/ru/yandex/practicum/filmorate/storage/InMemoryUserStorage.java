@@ -1,16 +1,20 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import ch.qos.logback.core.rolling.helper.IntegerTokenConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+
+import java.util.HashMap;
 import java.util.List;
 
 
 @Component
 @Slf4j
-public class InMemoryUserStorage extends AbstractStorage implements UserStorage{
+public class InMemoryUserStorage extends AbstractStorage<User> implements UserStorage{
     private Integer usersId = 0;
 
     @Override
@@ -24,26 +28,22 @@ public class InMemoryUserStorage extends AbstractStorage implements UserStorage{
         }
         this.usersId += 1;
         user.setId(usersId);
-        return (User) abstractCreate(user, user.getId());
+        return Create(user, user.getId());
     }
 
     @Override
     public User update(User user) throws ValidationException {
-        return (User) abstractUpdate(user, user.getId());
+        return update(user, user.getId());
     }
 
     @Override
-    public User delete(User user, User friend) {
-        if(!user.getFriends().contains((long) friend.getId())) {
-            throw new ObjectNotFoundException("В дурзьях нет пользователя с id = " + friend.getId());
-        }
-        user.getFriends().remove((long) friend.getId());
-        friend.getFriends().remove((long) user.getId());
-        return user;
+    public Boolean delete(User user) {
+        getMap().remove(user.getId());
+        return true;
     }
 
     @Override
     public List<User> findAll() {
-        return abstractFindAll("пользователей");
+        return find("пользователей");
     }
 }

@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -34,7 +35,7 @@ public class UserController {
         if(!userService.getUserStorage().getMap().containsKey(id)){
             throw new ObjectNotFoundException("Пользователь не существует!");
         }
-        return (User) userService.getUserStorage().getMap().get(id);
+        return userService.getUserStorage().getMap().get(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -76,6 +77,14 @@ public class UserController {
     @PutMapping
     public User update(@Valid @RequestBody User user) throws ValidationException {
         return userService.getUserStorage().update(user);
+    }
+
+    @DeleteMapping
+    public Boolean deleteUser(@Valid @RequestBody User user){
+        if(!userService.getUserStorage().getMap().containsKey(user.getId())){
+            throw new ObjectNotFoundException("Пользователь не существует!");
+        }
+        return userService.getUserStorage().delete(user);
     }
 
     public HashMap<Integer, User> getUsers() {

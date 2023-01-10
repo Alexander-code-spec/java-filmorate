@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -33,7 +34,7 @@ public class FilmController{
         if(!filmService.getFilmStorage().getMap().containsKey(id)){
             throw new ObjectNotFoundException("Пользователь не существует!");
         }
-        return (Film) filmService.getFilmStorage().getMap().get(id);
+        return filmService.getFilmStorage().getMap().get(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
@@ -65,6 +66,14 @@ public class FilmController{
     @Validated
     public Film update(@Valid @RequestBody Film film) throws ValidationException {
         return filmService.getFilmStorage().update(film);
+    }
+
+    @DeleteMapping
+    public Boolean deleteFilm(@Valid @RequestBody Film film){
+        if(!filmService.getFilmStorage().getMap().containsKey(film.getId())){
+            throw new ObjectNotFoundException("Пользователь не существует!");
+        }
+        return filmService.getFilmStorage().delete(film);
     }
 
     public HashMap<Integer, Film> getFilms() {

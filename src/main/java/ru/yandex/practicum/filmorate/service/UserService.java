@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Data
 public class UserService {
     private InMemoryUserStorage userStorage;
 
@@ -22,8 +21,8 @@ public class UserService {
     }
 
     public User addFriend(Integer userId, Integer friendId){
-        User user = (User) userStorage.getMap().get(userId);
-        User friend = (User) userStorage.getMap().get(friendId);
+        User user = userStorage.getMap().get(userId);
+        User friend = userStorage.getMap().get(friendId);
 
         if(user == null) {
             throw new ObjectNotFoundException("Пользователь не найден!");
@@ -37,16 +36,20 @@ public class UserService {
     }
 
     public User deleteFriend(Integer userId, Integer friendId){
-        User user = (User) userStorage.getMap().get(userId);
-        User friend = (User) userStorage.getMap().get(friendId);
+        User user = userStorage.getMap().get(userId);
+        User friend = userStorage.getMap().get(friendId);
 
         if(user == null) {
             throw new ObjectNotFoundException(String.format("Пользователь  с id = \"%s\" не найден!", userId));
         } else if(friend == null) {
             throw new ObjectNotFoundException(String.format("Друг с id = \"%s\" не найден!", friendId));
+        } else if(!user.getFriends().contains((long) friend.getId())) {
+            throw new ObjectNotFoundException("В дурзьях нет пользователя с id = " + friend.getId());
         }
+        user.getFriends().remove((long) friend.getId());
+        friend.getFriends().remove((long) user.getId());
 
-        return userStorage.delete(user, friend);
+        return user;
     }
 
     public List<User> getFriendList(Integer userId){
@@ -58,5 +61,9 @@ public class UserService {
         return users.values().stream()
                 .filter(p -> p.getFriends().contains(Long.valueOf(userId)))
                 .collect(Collectors.toList());
+    }
+
+    public InMemoryUserStorage getUserStorage() {
+        return userStorage;
     }
 }

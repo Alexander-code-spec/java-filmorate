@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class InMemoryFilmStorage extends AbstractStorage implements FilmStorage {
+public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmStorage {
     private Integer filmId = 0;
 
     @Override
@@ -23,7 +23,7 @@ public class InMemoryFilmStorage extends AbstractStorage implements FilmStorage 
         }
         this.filmId +=1;
         film.setId(filmId);
-        return (Film) abstractCreate(film, film.getId());
+        return Create(film, film.getId());
     }
 
     @Override
@@ -32,15 +32,17 @@ public class InMemoryFilmStorage extends AbstractStorage implements FilmStorage 
             log.debug("Возникла ошибка при валдиации объекта: {}", film);
             throw new ValidationException("Неверно задана дата выпуска фильма!");
         }
-        return (Film) abstractUpdate(film, film.getId());
+        return update(film, film.getId());
     }
 
     @Override
-    public void delete() {
+    public Boolean delete(Film film) {
+        getMap().remove(film.getId());
+        return true;
     }
 
     @Override
     public List<Film> findAll() {
-        return abstractFindAll("фильмов");
+        return find("фильмов");
     }
 }
