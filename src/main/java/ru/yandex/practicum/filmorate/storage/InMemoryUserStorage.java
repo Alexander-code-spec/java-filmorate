@@ -1,14 +1,10 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import ch.qos.logback.core.rolling.helper.IntegerTokenConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -28,7 +24,7 @@ public class InMemoryUserStorage extends AbstractStorage<User> implements UserSt
         }
         this.usersId += 1;
         user.setId(usersId);
-        return Create(user, user.getId());
+        return create(user, user.getId());
     }
 
     @Override
@@ -37,13 +33,14 @@ public class InMemoryUserStorage extends AbstractStorage<User> implements UserSt
     }
 
     @Override
-    public Boolean delete(User user) {
-        getMap().remove(user.getId());
-        return true;
+    public User delete(User user) {
+        return getMap().remove(user.getId());
     }
 
     @Override
     public List<User> findAll() {
-        return find("пользователей");
+        List<User> users = find();
+        log.debug("Текущее количество пользователей : {}", users.size());
+        return users;
     }
 }

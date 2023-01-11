@@ -59,7 +59,7 @@ public class FilmController{
 
     @DeleteMapping("/{id}/like/{userId}")
     public Film deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId){
-        return filmService.removeLike((Film) filmService.getFilmStorage().getMap().get(id), userId);
+        return filmService.removeLike(filmService.getFilmStorage().getMap().get(id), userId);
     }
 
     @PutMapping
@@ -70,10 +70,10 @@ public class FilmController{
 
     @DeleteMapping
     public Boolean deleteFilm(@Valid @RequestBody Film film){
-        if(!filmService.getFilmStorage().getMap().containsKey(film.getId())){
-            throw new ObjectNotFoundException("Пользователь не существует!");
+        if(filmService.getFilmStorage().delete(film) == null){
+            throw new ObjectNotFoundException("Фильм не существует!");
         }
-        return filmService.getFilmStorage().delete(film);
+        return true;
     }
 
     public HashMap<Integer, Film> getFilms() {

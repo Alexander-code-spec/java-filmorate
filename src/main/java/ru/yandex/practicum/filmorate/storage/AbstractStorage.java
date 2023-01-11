@@ -14,12 +14,11 @@ import java.util.Optional;
 @Slf4j
 public abstract class AbstractStorage<T> {
     private HashMap<Integer, T> map = new HashMap<>();
-    private Integer id = 0;
 
-    public T Create(T obj, Integer id) throws ValidationException {
+    public T create(T obj, Integer id) throws ValidationException {
         valid(obj, id, true);
         map.put(id, obj);
-        log.debug("Создан новый объект: {}", obj);
+        log.debug("Создан объект: {}", obj);
         return obj;
     }
 
@@ -30,8 +29,7 @@ public abstract class AbstractStorage<T> {
         return obj;
     }
 
-    public List<T> find(String objType) {
-        log.debug("Текущее количество " + objType + " : {}", map.size());
+    public List<T> find() {
         return new ArrayList<>(map.values());
     }
 

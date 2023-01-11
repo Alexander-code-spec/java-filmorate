@@ -4,22 +4,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.*;
 
 @Service
 public class FilmService {
-    private InMemoryFilmStorage filmStorage;
+    private final FilmStorage filmStorage;
 
     @Autowired
-    public FilmService(InMemoryFilmStorage filmStorage){
+    public FilmService(FilmStorage filmStorage){
         this.filmStorage = filmStorage;
-
     }
 
     public Film putLike(Integer filmId, Integer userId) {
-        Film film = (Film) filmStorage.getMap().get(filmId);
+        Film film = filmStorage.getMap().get(filmId);
         film.getLikes().add(Long.valueOf(userId));
         return film;
     }
@@ -54,7 +53,7 @@ public class FilmService {
         return filmsList.subList(0, count>filmsList.size()?filmsList.size():count);
     }
 
-    public InMemoryFilmStorage getFilmStorage() {
+    public FilmStorage getFilmStorage() {
         return filmStorage;
     }
 }

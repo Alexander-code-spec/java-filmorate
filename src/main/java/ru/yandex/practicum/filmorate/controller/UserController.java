@@ -81,10 +81,10 @@ public class UserController {
 
     @DeleteMapping
     public Boolean deleteUser(@Valid @RequestBody User user){
-        if(!userService.getUserStorage().getMap().containsKey(user.getId())){
+        if(userService.getUserStorage().delete(user) == null){
             throw new ObjectNotFoundException("Пользователь не существует!");
         }
-        return userService.getUserStorage().delete(user);
+        return true;
     }
 
     public HashMap<Integer, User> getUsers() {

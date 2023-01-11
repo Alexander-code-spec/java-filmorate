@@ -9,7 +9,7 @@ public interface Storage<T> {
 
     T update(T obj) throws ValidationException;
 
-    Boolean delete(T obj1);
+    T delete(T obj1);
 
     List<T> findAll();
 }
