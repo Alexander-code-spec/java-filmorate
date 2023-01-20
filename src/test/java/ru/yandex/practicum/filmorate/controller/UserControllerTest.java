@@ -5,6 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -24,7 +27,7 @@ class UserControllerTest {
 
     @BeforeEach
     public void before(){
-        userController = new UserController();
+        userController = new UserController(new UserService(new InMemoryUserStorage()));
     }
 
     @BeforeAll
@@ -77,10 +80,10 @@ class UserControllerTest {
                 .email("asdfgqwe@gmail.com")
                 .birthday(LocalDate.of(1978, 5, 23)).build());
 
-        assertEquals(userController.getUsers().get(1).getName(),
+        assertEquals(userController.getEmployeesById(1).getName(),
                 "Alexey",
                 "Валидация выполнется некорректно");
-        assertEquals(userController.getUsers().get(1).getEmail(),
+        assertEquals(userController.getEmployeesById(1).getEmail(),
                 "asdfgqwe@gmail.com",
                 "Валидация выполнется некорректно");
     }

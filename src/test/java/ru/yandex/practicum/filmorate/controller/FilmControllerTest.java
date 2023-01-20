@@ -3,10 +3,10 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.BindingResultUtils;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -28,7 +28,7 @@ class FilmControllerTest {
 
     @BeforeEach
     public void before(){
-        filmController = new FilmController();
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorage()));
     }
 
     @BeforeAll
@@ -80,10 +80,10 @@ class FilmControllerTest {
                 .duration(130)
                 .releaseDate(LocalDate.of(1983, 5, 23)).build());
 
-        assertEquals(filmController.getFilms().get(1).getName(),
+        assertEquals(filmController.getEmployeesById(1).getName(),
                 "Terminator2",
                 "Валидация выполнется некорректно");
-        assertEquals(filmController.getFilms().get(1).getDescription(),
+        assertEquals(filmController.getEmployeesById(1).getDescription(),
                 "Very Good film",
                 "Валидация выполнется некорректно");
     }
