@@ -80,10 +80,10 @@ class FilmControllerTest {
                 .duration(130)
                 .releaseDate(LocalDate.of(1983, 5, 23)).build());
 
-        assertEquals(filmController.getFilms().get(1).getName(),
+        assertEquals(filmController.getEmployeesById(1).getName(),
                 "Terminator2",
                 "Валидация выполнется некорректно");
-        assertEquals(filmController.getFilms().get(1).getDescription(),
+        assertEquals(filmController.getEmployeesById(1).getDescription(),
                 "Very Good film",
                 "Валидация выполнется некорректно");
     }
