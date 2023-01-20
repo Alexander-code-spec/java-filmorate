@@ -18,7 +18,7 @@ public class FilmService {
     }
 
     public Film putLike(Integer filmId, Integer userId) {
-        Film film = filmStorage.getMap().get(filmId);
+        Film film = filmStorage.get(filmId);
         film.getLikes().add(Long.valueOf(userId));
         return film;
     }
@@ -45,9 +45,8 @@ public class FilmService {
             }
             return Integer.compare(size2, size1);
         });
-        HashMap<Integer, Film> films = filmStorage.getMap();
 
-        topFilms.addAll(films.values());
+        topFilms.addAll(filmStorage.findAll());
         List<Film> filmsList = new ArrayList<>(topFilms);
 
         return filmsList.subList(0, count>filmsList.size()?filmsList.size():count);

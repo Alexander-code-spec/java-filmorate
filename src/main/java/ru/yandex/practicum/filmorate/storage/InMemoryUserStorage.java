@@ -43,4 +43,9 @@ public class InMemoryUserStorage extends AbstractStorage<User> implements UserSt
         log.debug("Текущее количество пользователей : {}", users.size());
         return users;
     }
+
+    @Override
+    public User get(int id) {
+        return getMap().get(id);
+    }
 }

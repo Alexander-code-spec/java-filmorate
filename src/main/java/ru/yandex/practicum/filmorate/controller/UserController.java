@@ -1,21 +1,18 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.util.CollectionUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.yaml.snakeyaml.util.EnumUtils;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.User;
-import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -32,10 +29,10 @@ public class UserController {
     @GetMapping("/{id}")
     @ResponseBody
     public User getEmployeesById(@PathVariable("id") Integer id) {
-        if(!userService.getUserStorage().getMap().containsKey(id)){
+        if(userService.getUserStorage().get(id) == null){
             throw new ObjectNotFoundException("Пользователь не существует!");
         }
-        return userService.getUserStorage().getMap().get(id);
+        return userService.getUserStorage().get(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -85,9 +82,5 @@ public class UserController {
             throw new ObjectNotFoundException("Пользователь не существует!");
         }
         return true;
-    }
-
-    public HashMap<Integer, User> getUsers() {
-        return userService.getUserStorage().getMap();
     }
 }

@@ -12,4 +12,6 @@ public interface Storage<T> {
     T delete(T obj1);
 
     List<T> findAll();
+
+    T get(int id);
 }

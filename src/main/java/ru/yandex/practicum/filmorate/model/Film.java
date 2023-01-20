@@ -30,4 +30,6 @@ public class Film {
     private int duration;
     @Builder.Default
     private Set<Long> likes = new HashSet<>();
+    private String genre;
+    private String rating;
 }

@@ -8,11 +8,8 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
-
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -31,10 +28,10 @@ public class FilmController{
     @GetMapping("/{id}")
     @ResponseBody
     public Film getEmployeesById(@PathVariable("id") Integer id) {
-        if(!filmService.getFilmStorage().getMap().containsKey(id)){
+        if(filmService.getFilmStorage().get(id)==null){
             throw new ObjectNotFoundException("Пользователь не существует!");
         }
-        return filmService.getFilmStorage().getMap().get(id);
+        return filmService.getFilmStorage().get(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
@@ -59,7 +56,7 @@ public class FilmController{
 
     @DeleteMapping("/{id}/like/{userId}")
     public Film deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId){
-        return filmService.removeLike(filmService.getFilmStorage().getMap().get(id), userId);
+        return filmService.removeLike(filmService.getFilmStorage().get(id), userId);
     }
 
     @PutMapping
@@ -74,9 +71,5 @@ public class FilmController{
             throw new ObjectNotFoundException("Фильм не существует!");
         }
         return true;
-    }
-
-    public HashMap<Integer, Film> getFilms() {
-        return filmService.getFilmStorage().getMap();
     }
 }

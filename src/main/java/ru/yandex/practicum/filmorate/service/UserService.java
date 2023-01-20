@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,8 +19,8 @@ public class UserService {
     }
 
     public User addFriend(Integer userId, Integer friendId){
-        User user = userStorage.getMap().get(userId);
-        User friend = userStorage.getMap().get(friendId);
+        User user = userStorage.get(userId);
+        User friend = userStorage.get(friendId);
 
         if(user == null) {
             throw new ObjectNotFoundException("Пользователь не найден!");
@@ -36,8 +34,8 @@ public class UserService {
     }
 
     public User deleteFriend(Integer userId, Integer friendId){
-        User user = userStorage.getMap().get(userId);
-        User friend = userStorage.getMap().get(friendId);
+        User user = userStorage.get(userId);
+        User friend = userStorage.get(friendId);
 
         if(user == null) {
             throw new ObjectNotFoundException(String.format("Пользователь  с id = \"%s\" не найден!", userId));
@@ -53,12 +51,13 @@ public class UserService {
     }
 
     public List<User> getFriendList(Integer userId){
-        HashMap<Integer, User> users = userStorage.getMap();
-        if(users.get(userId).getFriends() == null){
+        List<User> users = userStorage.findAll();
+        User user = userStorage.get(userId);
+        if(user.getFriends() == null){
             return null;
         }
 
-        return users.values().stream()
+        return users.stream()
                 .filter(p -> p.getFriends().contains(Long.valueOf(userId)))
                 .collect(Collectors.toList());
     }
