@@ -1,4 +1,4 @@
 # java-filmorate
 Template repository for Filmorate project.
 
-<img src="C:\Users\Александр\Downloads\ER-filmorate.png"/>
+<img src="https://github.com/Alexander-code-spec/java-filmorate/blob/db-er-diagramm/db-diagramm/ER-filmorate.png\"/>
