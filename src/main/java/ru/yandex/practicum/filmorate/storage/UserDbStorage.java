@@ -38,6 +38,8 @@ public class UserDbStorage  implements UserStorage{
         if(user.getLogin().contains(" ")) {
             log.debug("Возникла ошибка при валдиации объекта: {}", user);
             throw new ValidationException("Логин не должен содержать пробелы!");
+        } else if(user.getName().isEmpty()){
+            user.setName(user.getLogin());
         }
         String sqlQuery = "insert into Users(name, email, login, birthdate) " +
                 "values (?, ?, ?, ?)";
