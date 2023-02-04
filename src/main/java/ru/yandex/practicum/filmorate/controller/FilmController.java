@@ -2,15 +2,21 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import ru.yandex.practicum.filmorate.dao.GenreDao;
+import ru.yandex.practicum.filmorate.dao.MpaDao;
 import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -19,6 +25,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmController{
     private final FilmService filmService;
+    private final GenreDao genreDao;
+    private final MpaDao mpaDao;
 
     @GetMapping
     public List<Film> findAll() {
@@ -36,8 +44,8 @@ public class FilmController{
 
     @PutMapping("/{id}/like/{userId}")
     @ResponseBody
-    public Film putLike(@PathVariable("id") Integer id, @PathVariable() Integer userId) {
-        return filmService.putLike(id, userId);
+    public void putLike(@PathVariable("id") Integer id, @PathVariable() Integer userId) {
+        filmService.putLike(id, userId);
     }
 
     @GetMapping("/popular")
@@ -55,7 +63,7 @@ public class FilmController{
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId){
+    public Optional<Film> deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId){
         return filmService.removeLike(filmService.getFilmStorage().get(id), userId);
     }
 

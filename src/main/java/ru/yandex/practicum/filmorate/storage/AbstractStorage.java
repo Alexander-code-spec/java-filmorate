@@ -38,7 +38,7 @@ public abstract class AbstractStorage<T> {
                       boolean create) throws ValidationException {
         Optional<T> optionalObj = Optional.ofNullable(obj);
 
-        if(optionalObj.isPresent()) {
+        if(optionalObj.isPresent() && id != null) {
             if (!create &&  !map.containsKey(id)){
                 throw new ObjectNotFoundException("Невозможно обновить данные объекта с id = " + id +
                         ", такого объекта не сущесвтует");

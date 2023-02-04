@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -30,6 +31,7 @@ public class Film {
     private int duration;
     @Builder.Default
     private Set<Long> likes = new HashSet<>();
-    private String genre;
-    private String rating;
+    private Mpa mpa;
+    @Builder.Default
+    private Set<Genre> genres = new HashSet<>();;
 }
