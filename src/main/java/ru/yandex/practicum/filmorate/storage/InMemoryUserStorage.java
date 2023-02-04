@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
 
-
 @Component
 @Slf4j
 @Qualifier("InMemoryUserStorage")
