@@ -53,4 +53,9 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
     public Film get(int id) {
         return getMap().get(id);
     }
+
+    @Override
+    public List<Film> getLikesCount() {
+        return null;
+    }
 }

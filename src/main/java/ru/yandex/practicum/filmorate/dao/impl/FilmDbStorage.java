@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,12 +14,13 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.storage.AbstractStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @Qualifier("FilmDbStorage")
@@ -41,8 +42,8 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
             log.debug("Возникла ошибка при валдиации объекта: {}", film);
             throw new ValidationException("Неверно задана дата выпуска фильма!");
         }
-        String sqlQuery = "insert into Films(name, description, release_date, duration, mpa, likes) " +
-                "values (?, ?, ?, ?, ?, ?)";
+        String sqlQuery = "insert into Films(name, description, release_date, duration, mpa) " +
+                "values (?, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -54,7 +55,6 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
             stmt.setInt(4, film.getDuration());
             stmt.setInt(5, film.getMpa().getId());
-            stmt.setInt(6, film.getLikes().size());
 
             return stmt;
         }, keyHolder);
@@ -153,6 +153,15 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
         }
     }
 
+    @Override
+    public List<Film> getLikesCount() {
+        String sqlQuery = "select * from films " +
+                "left outer join likes on films.id = likes.film_id " +
+                "group by films.id order by count(distinct likes.user_id) desc";
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> createFilm(rs));
+    }
+
     private Film createFilm(ResultSet filmRows) throws SQLException {
             Film film = Film.builder()
                     .id(filmRows.getInt("id"))
@@ -170,4 +179,6 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
 
             return film;
     }
+
+
 }

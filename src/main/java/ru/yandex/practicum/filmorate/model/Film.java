@@ -29,9 +29,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Отрицательная продолжительность")
     private int duration;
-    @Builder.Default
-    private Set<Long> likes = new HashSet<>();
     private Mpa mpa;
     @Builder.Default
-    private Set<Genre> genres = new HashSet<>();;
+    private Set<Genre> genres = new HashSet<>();
 }

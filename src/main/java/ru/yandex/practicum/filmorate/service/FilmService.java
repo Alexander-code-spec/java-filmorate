@@ -42,22 +42,9 @@ public class FilmService {
     }
 
     public List<Film> getTopMovies(Integer count){
-        SortedSet<Film> topFilms = new TreeSet<>((o1, o2) -> {
-            int size1 = likeDao.getAllFilmLikes(o1.getId()).size();
-            int size2 = likeDao.getAllFilmLikes(o2.getId()).size();
-            if (size1 == 0) {
-                return 1;
-            }
-            if (size2 == 0) {
-                return -1;
-            }
-            return Integer.compare(size2, size1);
-        });
+        List<Film> films = filmStorage.getLikesCount();
 
-        topFilms.addAll(filmStorage.findAll());
-        List<Film> filmsList = new ArrayList<>(topFilms);
-
-        return filmsList.subList(0, count>filmsList.size()?filmsList.size():count);
+        return films.subList(0, count>films.size()?films.size():count);
     }
 
     public FilmStorage getFilmStorage() {
