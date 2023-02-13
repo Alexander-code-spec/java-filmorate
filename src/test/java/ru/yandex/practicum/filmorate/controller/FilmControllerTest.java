@@ -3,10 +3,12 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.dao.LikesDao;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -28,7 +30,9 @@ class FilmControllerTest {
 
     @BeforeEach
     public void before(){
-        filmController = new FilmController(new FilmService(new InMemoryFilmStorage()));
+        LikesDao likeDao = null;
+        UserStorage userStorage = null;
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), likeDao, userStorage));
     }
 
     @BeforeAll
