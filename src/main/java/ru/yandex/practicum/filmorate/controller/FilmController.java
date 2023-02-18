@@ -60,9 +60,13 @@ public class FilmController{
         return filmService.removeLike(filmService.getFilmStorage().get(id), userId);
     }
 
+    @GetMapping("/director/{directorId}")
+    public List<Film> getByDirectorId(@PathVariable("directorId") Integer directorId, @RequestParam String sortBy) {
+        return filmService.getSortDirector(directorId, sortBy);
+    }
+
     @PutMapping
-    @Validated
-    public Film update(@Valid @RequestBody Film film) throws ValidationException {
+    public Film update(@RequestBody @Valid  Film film) throws ValidationException {
         return filmService.getFilmStorage().update(film);
     }
 
