@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -57,5 +58,14 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
     @Override
     public List<Film> getLikesCount() {
         return null;
+    }
+
+    @Override
+    public List<Film> getFilmsByIds(List<Integer> filmsIds) {
+        List<Film> films = new ArrayList<>();
+        for (Integer filmId : filmsIds) {
+            films.add(get(filmId));
+        }
+        return films;
     }
 }

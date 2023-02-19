@@ -4,25 +4,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.Friendship;
+import ru.yandex.practicum.filmorate.dao.LikesDao;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Friends;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 public class UserService {
+    private final FilmsRecommendationService filmsRecommendationService;
     private UserStorage userStorage;
     private Friendship friendship;
+    private LikesDao likesDao;
+    private FilmStorage filmStorage;
+
 
     @Autowired
     public UserService(@Qualifier("UserDbStorage")UserStorage userStorage,
-                       @Qualifier("FriendshipDaoImplementation")Friendship friendship){
+                       @Qualifier("FriendshipDaoImplementation")Friendship friendship,
+                       @Qualifier("LikesDao")LikesDao likesDAO,
+                       @Qualifier("FilmDbStorage")FilmStorage filmStorage){
         this.userStorage = userStorage;
         this.friendship = friendship;
+        this.likesDao = likesDAO;
+        this.filmStorage = filmStorage;
+        filmsRecommendationService = new FilmsRecommendationService();
     }
 
     public User addFriend(Integer userId, Integer friendId){
@@ -59,5 +71,14 @@ public class UserService {
 
     public UserStorage getUserStorage() {
         return userStorage;
+    }
+
+    public List<Film> getFilmRecommendations(Integer userId) {
+        Map <Integer, Map<Integer, Integer>> existingData = likesDao.findLikesForAllUsers();
+        if (!existingData.containsKey(userId)) {
+            return new ArrayList<>();
+        }
+        List<Integer> filmsIds =  filmsRecommendationService.recommendFilmsByUserId(existingData, userId);
+        return filmStorage.getFilmsByIds(filmsIds);
     }
 }

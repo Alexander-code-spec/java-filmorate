@@ -17,8 +17,10 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.AbstractStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -180,5 +182,12 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
             return film;
     }
 
-
+    @Override
+    public List<Film> getFilmsByIds(List<Integer> filmsIds) {
+        if (filmsIds.isEmpty()) return new ArrayList<>();
+        String inSql = String.join(",", Collections.nCopies(filmsIds.size(), "?"));
+        String filmsQuery = "select * from films " +
+                "where id in (" + inSql + ")";
+        return jdbcTemplate.query(filmsQuery, (rs, rowNum) -> createFilm(rs), filmsIds.toArray());
+    }
 }
