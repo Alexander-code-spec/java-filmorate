@@ -83,7 +83,7 @@ public class UserDbStorage  implements UserStorage {
 
     @Override
     public User delete(User user) {
-        String sqlQuery = "delete from users where id = ? cascade";
+        String sqlQuery = "delete from users where id = ?";
         jdbcTemplate.update(sqlQuery, user.getId());
         return user;
     }
