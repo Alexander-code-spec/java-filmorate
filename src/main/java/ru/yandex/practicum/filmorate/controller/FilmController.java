@@ -50,6 +50,12 @@ public class FilmController{
         return filmService.getTopMovies(count);
     }
 
+    @GetMapping("/common")
+    @ResponseBody
+    public List<Film> getCommonMovies(@RequestParam(defaultValue = "-1") Integer userId, @RequestParam(defaultValue = "-1") Integer friendId) {
+        return filmService.getCommonMovies(userId, friendId);
+    }
+
     @PostMapping
     public Film create(@RequestBody @Valid  Film film) throws ValidationException {
         return filmService.getFilmStorage().create(film);
@@ -70,6 +76,17 @@ public class FilmController{
     public Boolean deleteFilm(@Valid @RequestBody Film film){
         if(filmService.getFilmStorage().delete(film) == null){
             throw new ObjectNotFoundException("Фильм не существует!");
+        }
+        return true;
+    }
+
+    @DeleteMapping("/{filmId}")
+    public Boolean deleteFilmById(@PathVariable("filmId") Integer filmId){
+        if(filmService.getFilmStorage().get(filmId) == null){
+            throw new ObjectNotFoundException("Фильм не существует!");
+        }
+        else {
+            filmService.getFilmStorage().delete(filmService.getFilmStorage().get(filmId));
         }
         return true;
     }
