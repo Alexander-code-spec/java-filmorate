@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.Friendship;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Friends;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -50,7 +51,7 @@ public class UserService {
 
     public List<User> getFriendList(Integer userId){
         List<User> users = new ArrayList<>();
-
+        userStorage.get(userId);
         for (Friends friend: friendship.getAllFriends(userId)){
             users.add(userStorage.get(friend.getFriendId()));
         }
