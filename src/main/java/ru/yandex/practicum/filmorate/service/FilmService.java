@@ -69,4 +69,8 @@ public class FilmService {
     public FilmStorage getFilmStorage() {
         return filmStorage;
     }
+
+    public List<Film> search (String query, boolean isT, boolean isD) {
+        return filmStorage.search(query, isT, isD);
+    }
 }

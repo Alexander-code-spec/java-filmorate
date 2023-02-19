@@ -77,4 +77,9 @@ public class FilmController{
         }
         return true;
     }
+    @GetMapping("/search")
+    @ResponseBody
+    public List<Film> search(@RequestParam String query, @RequestParam List<String> by) {
+        return filmService.search(query, by.contains("title"), by.contains("director"));
+    }
 }
