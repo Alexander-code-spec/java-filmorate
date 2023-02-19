@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
@@ -86,9 +85,20 @@ public class UserController {
 
     @GetMapping("{id}/feed")
     public List<Feed> getUserFeed(@PathVariable Integer id) {
-        if(id == null) {
+        if (id == null) {
             return null;
         }
         return userService.getUserFeed(id);
+    }
+
+    @DeleteMapping("/{userId}")
+    public Boolean deleteUserById(@PathVariable("userId") Integer userId){
+        if(userService.getUserStorage().get(userId) == null){
+            throw new ObjectNotFoundException("Пользователь не существует!");
+        }
+        else {
+            userService.getUserStorage().delete(userService.getUserStorage().get(userId));
+        }
+        return true;
     }
 }

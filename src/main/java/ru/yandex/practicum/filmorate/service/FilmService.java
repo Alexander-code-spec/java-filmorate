@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.dao.LikesDao;
 import ru.yandex.practicum.filmorate.enums.FeedEventType;
 import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -54,6 +54,12 @@ public class FilmService {
         List<Film> films = filmStorage.getLikesCount();
 
         return films.subList(0, count>films.size()?films.size():count);
+    }
+
+    public List<Film> getCommonMovies(Integer userId, Integer friendId){
+        userStorage.get(userId);
+        userStorage.get(friendId);
+        return filmStorage.getCommonMovies(userId, friendId);
     }
 
     public FilmStorage getFilmStorage() {
