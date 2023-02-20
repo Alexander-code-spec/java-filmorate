@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.DirectorDao;
 import ru.yandex.practicum.filmorate.dao.LikesDao;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -50,6 +51,12 @@ public class FilmService {
         List<Film> films = filmStorage.getLikesCount();
 
         return films.subList(0, count>films.size()?films.size():count);
+    }
+
+    public List<Film> getCommonMovies(Integer userId, Integer friendId){
+        userStorage.get(userId);
+        userStorage.get(friendId);
+        return filmStorage.getCommonMovies(userId, friendId);
     }
 
     public List<Film> getSortDirector(Integer id, String sort){

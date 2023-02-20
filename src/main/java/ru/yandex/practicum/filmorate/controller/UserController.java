@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -79,6 +80,17 @@ public class UserController {
     public Boolean deleteUser(@Valid @RequestBody User user){
         if(userService.getUserStorage().delete(user) == null){
             throw new ObjectNotFoundException("Пользователь не существует!");
+        }
+        return true;
+    }
+
+    @DeleteMapping("/{userId}")
+    public Boolean deleteUserById(@PathVariable("userId") Integer userId){
+        if(userService.getUserStorage().get(userId) == null){
+            throw new ObjectNotFoundException("Пользователь не существует!");
+        }
+        else {
+            userService.getUserStorage().delete(userService.getUserStorage().get(userId));
         }
         return true;
     }

@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.AbstractStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -23,6 +24,7 @@ import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Qualifier("FilmDbStorage")
@@ -75,6 +77,7 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
             }
         }
 
+        film.setGenres(new HashSet<>(genreDao.getAllFilmGenre(film.getId())));
         directorDao.deleteFilmDirector(film.getId());
         Set<Director> filmDirectors = new HashSet<>(film.getDirectors());
         if(!filmDirectors.isEmpty()){
@@ -136,7 +139,7 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
 
     @Override
     public Film delete(Film film) {
-        String sqlQuery = "delete from films where id = ? cascade";
+        String sqlQuery = "delete from films where id = ?";
         jdbcTemplate.update(sqlQuery, film.getId());
         return film;
     }
@@ -179,13 +182,33 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
 
     @Override
     public List<Film> getLikesCount() {
-        String sqlQuery = "select * from films " +
+        String sqlQuery = "SELECT ID, NAME, DESCRIPTION, RELEASE_DATE, DURATION, GENRE, MPA, COUNT(DISTINCT USER_ID) AS LIKES FROM FILMS " +
                 "left outer join likes on films.id = likes.film_id " +
                 "group by films.id order by count(distinct likes.user_id) desc";
 
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> createFilm(rs));
     }
 
+    @Override
+    public List<Film> getCommonMovies(Integer userId, Integer friendId) {
+        String sqlQuery = "SELECT ID, NAME, DESCRIPTION, RELEASE_DATE, DURATION, GENRE, MPA, COUNT(DISTINCT USER_ID) AS LIKES FROM FILMS \n" +
+                "LEFT OUTER JOIN LIKES ON FILMS.ID = LIKES.FILM_ID \n" +
+                "WHERE FILM_ID IN ( SELECT FILM FROM (SELECT \n" +
+                "L.FILM_ID AS FILM, \n" +
+                "COUNT(L.USER_ID) AS USERCOUNT \n" +
+                "FROM \n" +
+                "LIKES AS L \n" +
+                "WHERE \n" +
+                "L.USER_ID IN (?, ?) \n" +
+                "GROUP BY \n" +
+                "FILM \n" +
+                "HAVING \n" +
+                "USERCOUNT = 2 )) \n" +
+                "GROUP BY FILMS.ID ORDER BY COUNT(DISTINCT LIKES.USER_ID) DESC";
+
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> createFilm(rs), userId, friendId);
+    }
+    
     @Override
     public List<Film> getDirectorFilmsByYear(Integer id) {
         Long i = Long.valueOf(id);
@@ -277,6 +300,5 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
             return jdbcTemplate.query(sqlReq, (rs, rowNum) -> createFilm(rs), lQuery, lQuery); // full search
         }
     }
-
 
 }
