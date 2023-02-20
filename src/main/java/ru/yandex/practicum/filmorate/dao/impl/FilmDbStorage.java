@@ -7,10 +7,12 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.dao.DirectorDao;
 import ru.yandex.practicum.filmorate.dao.GenreDao;
 import ru.yandex.practicum.filmorate.dao.MpaDao;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -31,11 +33,16 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
     private final JdbcTemplate jdbcTemplate;
     private final GenreDao genreDao;
     private final MpaDao mpaDao;
+    private final DirectorDao directorDao;
 
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, GenreDao genreDao, MpaDao mpaDao) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate,
+                         GenreDao genreDao,
+                         MpaDao mpaDao,
+                         DirectorDao directorDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.genreDao = genreDao;
         this.mpaDao = mpaDao;
+        this.directorDao = directorDao;
     }
 
     @Override
@@ -72,6 +79,13 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
 
         film.setGenres(new HashSet<>(genreDao.getAllFilmGenre(film.getId())));
 
+        directorDao.deleteFilmDirector(film.getId());
+        Set<Director> filmDirectors = new HashSet<>(film.getDirectors());
+        if(!filmDirectors.isEmpty()){
+            for(Director director :filmDirectors){
+                directorDao.createFilmDirector(film.getId(), director);
+            }
+        }
         log.debug("Создан объект: {}", film);
 
         return film;
@@ -97,11 +111,20 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
             throw new ObjectNotFoundException("Такой фильм не существует");
         }
 
+        if(film.getDirectors() == null || film.getDirectors().isEmpty()) {
+            directorDao.deleteFilmDirector(film.getId());
+        } else {
+            directorDao.deleteFilmDirector(film.getId());
+            Set<Director> filmDirector = new HashSet<>(film.getDirectors());
+            if(!filmDirector.isEmpty()){
+                for(Director director:filmDirector){
+                    directorDao.createFilmDirector(film.getId(), director);
+                }
+            }
+        }
         if (film.getGenres() == null || film.getGenres().isEmpty()){
             genreDao.deleteFilmGenre(film.getId());
-            log.info("Фильм с id = {} успешно обновлен", film.getId());
-            return film;
-        } else {
+        }  else {
             genreDao.deleteFilmGenre(film.getId());
             Set<Genre> filmGenres = new HashSet<>(film.getGenres());
             if(!filmGenres.isEmpty()){
@@ -109,10 +132,9 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
                     genreDao.createFilmGenre(film.getId(), genre);
                 }
             }
-
-            log.info("Фильм с id = {} успешно обновлен", film.getId());
-            return get(film.getId());
         }
+        log.info("Фильм с id = {} успешно обновлен", film.getId());
+        return get(film.getId());
     }
 
     @Override
@@ -146,6 +168,7 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
                     .build();
 
             film.setGenres((Set<Genre>) genreDao.getAllFilmGenre(film.getId()));
+            film.setDirectors((Set<Director>) directorDao.getAllFilmDirector(film.getId()));
 
             log.info("Найден фильм" +
                     ": {} {}", film.getId(), film.getName());
@@ -185,6 +208,27 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
 
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> createFilm(rs), userId, friendId);
     }
+    
+    @Override
+    public List<Film> getDirectorFilmsByYear(Integer id) {
+        Long i = Long.valueOf(id);
+        String sqlQuery = "select f.* " +
+                "from films_directors " +
+                "join FILMS f on f.ID = films_directors.film_id " +
+                "where director_id = " + i +
+                " group by f.id " +
+                "order by extract(year from f.release_date)";
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> createFilm(rs));
+    }
+
+    @Override
+    public List<Film> getDirectorFilmsByRating(Integer id) {
+        String sqlQuery = "select f.* from likes " +
+                "RIGHT JOIN FILMS F on F.ID = likes.FILM_ID " +
+                "JOIN FILMS_DIRECTORS FD on F.ID = FD.FILM_ID where DIRECTOR_ID = ? " +
+                "group by f.ID order by count(likes.USER_ID)";
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> createFilm(rs), id);
+    }
 
     private Film createFilm(ResultSet filmRows) throws SQLException {
             Film film = Film.builder()
@@ -199,10 +243,62 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
                     .build();
 
             film.setGenres((Set<Genre>) genreDao.getAllFilmGenre(film.getId()));
+            film.setDirectors((Set<Director>) directorDao.getAllFilmDirector(film.getId()));
             log.info("Найден фильм: {} {}", film.getId(), film.getName());
 
             return film;
     }
 
+    @Override
+    public List<Film> search (String query, boolean isTitle, boolean isDirector) {
+        String lQuery = query.toLowerCase();
+        if (!isDirector && !isTitle ){
+            throw new ObjectNotFoundException("Wrong params value");
+        }
+
+        if (isDirector && !isTitle){
+            String sqlReq = "SELECT " +
+                    "f.*" +
+                    "FROM films as f " +
+                    "LEFT JOIN films_directors as fd ON f.id = fd.film_id " +
+                    "LEFT JOIN directors as d ON fd.DIRECTOR_ID = d.id " +
+                    "LEFT JOIN (SELECT " +
+                    "film_id, " +
+                    "COUNT(user_id) as cl " +
+                    "FROM likes " +
+                    "GROUP BY film_id) as l ON f.id = l.film_id " +
+                    "WHERE LOWER (d.name) LIKE CONCAT( '%',?,'%') " +
+                    "GROUP BY f.id " +
+                    "ORDER BY cl DESC";
+            return jdbcTemplate.query(sqlReq, (rs, rowNum) -> createFilm(rs), lQuery);
+        } else if (isTitle && !isDirector) {
+            String sqlReq = "SELECT " +
+                    "f.* " +
+                    "FROM films AS f " +
+                    "LEFT JOIN (SELECT " +
+                    "film_id, " +
+                    "COUNT(user_id) as cl " +
+                    "FROM likes AS lq " +
+                    "GROUP BY film_id) AS l ON f.id =  l.film_id " +
+                    "WHERE LOWER (name) LIKE CONCAT('%',?,'%') " +
+                    "GROUP BY f.id " +
+                    "ORDER BY cl DESC";
+            return jdbcTemplate.query(sqlReq, (rs, rowNum) -> createFilm(rs), lQuery);// find by title
+        } else {
+            String sqlReq = "SELECT " +
+                    "f.* " +
+                    "FROM films AS f " +
+                    "LEFT JOIN (SELECT " +
+                    "film_id, " +
+                    "COUNT(user_id) as cl " +
+                    "FROM likes as lq " +
+                    "GROUP BY film_id) AS l ON f.id = l.film_id " +
+                    "LEFT JOIN films_directors as fd ON f.id = fd.film_id " +
+                    "LEFT JOIN directors as d ON fd.DIRECTOR_ID = d.id " +
+                    "WHERE LOWER (f.name) LIKE CONCAT ('%', ?, '%') OR LOWER(d.name) LIKE CONCAT ('%',?,'%') " +
+                    "ORDER BY cl DESC";
+            return jdbcTemplate.query(sqlReq, (rs, rowNum) -> createFilm(rs), lQuery, lQuery); // full search
+        }
+    }
 
 }
