@@ -67,5 +67,12 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
             films.add(get(filmId));
         }
         return films;
+    public List<Film> getDirectorFilmsByYear(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getDirectorFilmsByRating(Integer id) {
+        return null;
     }
 }
