@@ -13,4 +13,6 @@ public interface FilmStorage extends Storage<Film> {
     List<Film> getDirectorFilmsByYear(Integer id);
 
     List<Film> getDirectorFilmsByRating(Integer id);
+
+    List<Film> search (String query, boolean isT, boolean isD);
 }

@@ -226,5 +226,57 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
             return film;
     }
 
+    @Override
+    public List<Film> search (String query, boolean isTitle, boolean isDirector) {
+        String lQuery = query.toLowerCase();
+        if (!isDirector && !isTitle ){
+            throw new ObjectNotFoundException("Wrong params value");
+        }
+
+        if (isDirector && !isTitle){
+            String sqlReq = "SELECT " +
+                    "f.*" +
+                    "FROM films as f " +
+                    "LEFT JOIN films_directors as fd ON f.id = fd.film_id " +
+                    "LEFT JOIN directors as d ON fd.DIRECTOR_ID = d.id " +
+                    "LEFT JOIN (SELECT " +
+                    "film_id, " +
+                    "COUNT(user_id) as cl " +
+                    "FROM likes " +
+                    "GROUP BY film_id) as l ON f.id = l.film_id " +
+                    "WHERE LOWER (d.name) LIKE CONCAT( '%',?,'%') " +
+                    "GROUP BY f.id " +
+                    "ORDER BY cl DESC";
+            return jdbcTemplate.query(sqlReq, (rs, rowNum) -> createFilm(rs), lQuery);
+        } else if (isTitle && !isDirector) {
+            String sqlReq = "SELECT " +
+                    "f.* " +
+                    "FROM films AS f " +
+                    "LEFT JOIN (SELECT " +
+                    "film_id, " +
+                    "COUNT(user_id) as cl " +
+                    "FROM likes AS lq " +
+                    "GROUP BY film_id) AS l ON f.id =  l.film_id " +
+                    "WHERE LOWER (name) LIKE CONCAT('%',?,'%') " +
+                    "GROUP BY f.id " +
+                    "ORDER BY cl DESC";
+            return jdbcTemplate.query(sqlReq, (rs, rowNum) -> createFilm(rs), lQuery);// find by title
+        } else {
+            String sqlReq = "SELECT " +
+                    "f.* " +
+                    "FROM films AS f " +
+                    "LEFT JOIN (SELECT " +
+                    "film_id, " +
+                    "COUNT(user_id) as cl " +
+                    "FROM likes as lq " +
+                    "GROUP BY film_id) AS l ON f.id = l.film_id " +
+                    "LEFT JOIN films_directors as fd ON f.id = fd.film_id " +
+                    "LEFT JOIN directors as d ON fd.DIRECTOR_ID = d.id " +
+                    "WHERE LOWER (f.name) LIKE CONCAT ('%', ?, '%') OR LOWER(d.name) LIKE CONCAT ('%',?,'%') " +
+                    "ORDER BY cl DESC";
+            return jdbcTemplate.query(sqlReq, (rs, rowNum) -> createFilm(rs), lQuery, lQuery); // full search
+        }
+    }
+
 
 }
