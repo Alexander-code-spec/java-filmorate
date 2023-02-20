@@ -93,6 +93,7 @@ public class FilmController{
             filmService.getFilmStorage().delete(filmService.getFilmStorage().get(filmId));
         }
         return true;
+    }
 
     @GetMapping("/search")
     @ResponseBody

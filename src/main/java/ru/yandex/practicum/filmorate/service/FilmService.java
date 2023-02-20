@@ -59,7 +59,6 @@ public class FilmService {
         return filmStorage.getCommonMovies(userId, friendId);
     }
 
-
     public List<Film> getSortDirector(Integer id, String sort){
         if(directorDao.getDirectorById(id) == null){
             throw new ObjectNotFoundException("Такого режиссера не существует");

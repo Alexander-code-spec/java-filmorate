@@ -86,7 +86,6 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
                 directorDao.createFilmDirector(film.getId(), director);
             }
         }
-
         log.debug("Создан объект: {}", film);
 
         return film;
