@@ -63,4 +63,19 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
     public List<Film> getCommonMovies(Integer userId, Integer friendId) {
         return null;
     }
+
+    @Override
+    public List<Film> getDirectorFilmsByYear(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getDirectorFilmsByRating(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<Film> search(String query, boolean isT, boolean isD) {
+        return null;
+    }
 }
