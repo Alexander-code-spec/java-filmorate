@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.enums.EventType;
-import ru.yandex.practicum.filmorate.enums.Operation;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
 
 @Data
 @NoArgsConstructor
@@ -14,8 +14,8 @@ import ru.yandex.practicum.filmorate.enums.Operation;
 public class Feed {
     private long timestamp;
     private int userId;
-    private EventType eventType;
-    private Operation operation;
+    private FeedEventType eventType;
+    private FeedOperation operation;
     private int eventId;
     private int entityId;
 }

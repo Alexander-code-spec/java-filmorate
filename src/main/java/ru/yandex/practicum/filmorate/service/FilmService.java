@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.FeedDao;
 import ru.yandex.practicum.filmorate.dao.LikesDao;
-import ru.yandex.practicum.filmorate.enums.EventType;
-import ru.yandex.practicum.filmorate.enums.Operation;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -35,7 +35,7 @@ public class FilmService {
 
     public void putLike(Integer filmId, Integer userId) {
         likeDao.createFilmLike(filmId, userId);
-        feedDao.addToUserFeed(userId, filmId, EventType.LIKE, Operation.ADD);
+        feedDao.addToUserFeed(userId, filmId, FeedEventType.LIKE, FeedOperation.ADD);
     }
 
     public Optional<Film> removeLike(Film film, Integer userId){
@@ -46,7 +46,7 @@ public class FilmService {
         }
 
         likeDao.deleteFilmLike(film.getId(), userId);
-        feedDao.addToUserFeed(userId, film.getId(), EventType.LIKE, Operation.REMOVE);
+        feedDao.addToUserFeed(userId, film.getId(), FeedEventType.LIKE, FeedOperation.REMOVE);
         return Optional.of(film);
     }
 

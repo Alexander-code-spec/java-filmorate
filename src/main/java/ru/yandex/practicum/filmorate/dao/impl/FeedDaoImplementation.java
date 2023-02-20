@@ -4,8 +4,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.FeedDao;
-import ru.yandex.practicum.filmorate.enums.EventType;
-import ru.yandex.practicum.filmorate.enums.Operation;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.model.Feed;
 
 import java.sql.ResultSet;
@@ -23,7 +23,7 @@ public class FeedDaoImplementation implements FeedDao {
     }
 
     @Override
-    public void addToUserFeed(Integer userId, Integer entityId, EventType eventType, Operation operation) {
+    public void addToUserFeed(Integer userId, Integer entityId, FeedEventType eventType, FeedOperation operation) {
         // Вставим событие в таблицу feed
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("feed")
@@ -63,8 +63,8 @@ public class FeedDaoImplementation implements FeedDao {
                 .eventId(rs.getInt("event_id"))
                 .userId(rs.getInt("user_id"))
                 .entityId(rs.getInt("entity_id"))
-                .eventType(EventType.valueOf(rs.getString("event_type")))
-                .operation(Operation.valueOf(rs.getString("operation")))
+                .eventType(FeedEventType.valueOf(rs.getString("event_type")))
+                .operation(FeedOperation.valueOf(rs.getString("operation")))
                 .timestamp(rs.getTimestamp("timestamp").getTime())
                 .build();
     }

@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.FeedDao;
 import ru.yandex.practicum.filmorate.dao.Friendship;
-import ru.yandex.practicum.filmorate.enums.EventType;
-import ru.yandex.practicum.filmorate.enums.Operation;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Friends;
@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -43,7 +42,7 @@ public class UserService {
             throw new ObjectNotFoundException(String.format("Друг с id = %s не найден!", friendId));
         }
         friendship.inviteFriend(user.getId(), friend.getId());
-        feedDao.addToUserFeed(user.getId(), friend.getId(), EventType.FRIEND, Operation.ADD);
+        feedDao.addToUserFeed(user.getId(), friend.getId(), FeedEventType.FRIEND, FeedOperation.ADD);
 
         return user;
     }
@@ -53,7 +52,7 @@ public class UserService {
             throw new ObjectNotFoundException("id не может быть меньше 0!");
         }
         friendship.deleteFromFriends(userId, friendId);
-        feedDao.addToUserFeed(userId, friendId, EventType.FRIEND, Operation.REMOVE);
+        feedDao.addToUserFeed(userId, friendId, FeedEventType.FRIEND, FeedOperation.REMOVE);
 
         return userStorage.get(userId);
     }
