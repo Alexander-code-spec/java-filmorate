@@ -58,4 +58,14 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
     public List<Film> getLikesCount() {
         return null;
     }
+
+    @Override
+    public List<Film> getDirectorFilmsByYear(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getDirectorFilmsByRating(Integer id) {
+        return null;
+    }
 }
