@@ -62,7 +62,7 @@ public class UserService {
 
     public List<User> getFriendList(Integer userId){
         List<User> users = new ArrayList<>();
-
+        userStorage.get(userId);
         for (Friends friend: friendship.getAllFriends(userId)){
             users.add(userStorage.get(friend.getFriendId()));
         }

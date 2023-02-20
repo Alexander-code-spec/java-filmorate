@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -67,5 +67,24 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
             films.add(get(filmId));
         }
         return films;
+   }
+   
+   public List<Film> getCommonMovies(Integer userId, Integer friendId) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getDirectorFilmsByYear(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getDirectorFilmsByRating(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<Film> search(String query, boolean isT, boolean isD) {
+        return null;
     }
 }

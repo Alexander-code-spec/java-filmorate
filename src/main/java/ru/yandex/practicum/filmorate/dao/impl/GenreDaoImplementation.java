@@ -14,8 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+
 
 @Component
 @Slf4j
@@ -34,8 +33,8 @@ public class GenreDaoImplementation implements GenreDao {
 
     @Override
     public Collection<Genre> getAllFilmGenre(Integer id) {
-        String sql = "select * from film_genre where film_id = " + id;
-        return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) -> makeFilmGenre(rs)));
+        String sql = "select * from film_genre where film_id = ? ORDER BY GENRE_ID";
+        return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) -> makeFilmGenre(rs), id));
     }
 
     @Override
