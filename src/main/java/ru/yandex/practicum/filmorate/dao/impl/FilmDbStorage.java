@@ -20,8 +20,10 @@ import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.AbstractStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -250,6 +252,14 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
     }
 
     @Override
+    public List<Film> getFilmsByIds(List<Integer> filmsIds) {
+        if (filmsIds.isEmpty()) return new ArrayList<>();
+        String inSql = String.join(",", Collections.nCopies(filmsIds.size(), "?"));
+        String filmsQuery = "select * from films " +
+                "where id in (" + inSql + ")";
+        return jdbcTemplate.query(filmsQuery, (rs, rowNum) -> createFilm(rs), filmsIds.toArray());
+    }
+
     public List<Film> search (String query, boolean isTitle, boolean isDirector) {
         String lQuery = query.toLowerCase();
         if (!isDirector && !isTitle ){
@@ -300,5 +310,4 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
             return jdbcTemplate.query(sqlReq, (rs, rowNum) -> createFilm(rs), lQuery, lQuery); // full search
         }
     }
-
 }

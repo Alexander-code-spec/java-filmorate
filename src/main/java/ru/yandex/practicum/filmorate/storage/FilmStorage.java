@@ -10,6 +10,8 @@ public interface FilmStorage extends Storage<Film> {
 
     List<Film> getLikesCount();
 
+    List<Film> getFilmsByIds(List<Integer> filmsIds);
+
     List<Film> getCommonMovies(Integer userId, Integer friendId);
 
     List<Film> getDirectorFilmsByYear(Integer id);
