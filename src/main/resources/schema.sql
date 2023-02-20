@@ -65,9 +65,6 @@ CREATE TABLE IF NOT EXISTS  Film_genre(
     film_id INTEGER REFERENCES Films(id) ON DELETE CASCADE,
     genre_id INTEGER REFERENCES Genres(id) ON DELETE CASCADE,
     CONSTRAINT ident PRIMARY KEY (film_id, genre_id)
-    film_id INTEGER REFERENCES Films(id),
-    genre_id INTEGER REFERENCES Genres(id),
-    CONSTRAINT ident_genre PRIMARY KEY (film_id, genre_id)
 );
 
 CREATE TABLE IF NOT EXISTS films_directors (

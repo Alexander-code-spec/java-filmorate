@@ -78,4 +78,5 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
     public List<Film> search(String query, boolean isT, boolean isD) {
         return null;
     }
+
 }

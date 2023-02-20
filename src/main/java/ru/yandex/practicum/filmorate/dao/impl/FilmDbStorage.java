@@ -78,6 +78,7 @@ public class FilmDbStorage extends AbstractStorage<Film> implements FilmStorage 
         }
 
         film.setGenres(new HashSet<>(genreDao.getAllFilmGenre(film.getId())));
+
         directorDao.deleteFilmDirector(film.getId());
         Set<Director> filmDirectors = new HashSet<>(film.getDirectors());
         if(!filmDirectors.isEmpty()){
