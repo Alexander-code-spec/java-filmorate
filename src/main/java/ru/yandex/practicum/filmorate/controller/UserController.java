@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -91,6 +93,11 @@ public class UserController {
         return userService.getUserFeed(id);
     }
 
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getFilmRecommendations(@PathVariable ("id") Integer id) {
+        return userService.getFilmRecommendations(id);
+    }
+    
     @DeleteMapping("/{userId}")
     public Boolean deleteUserById(@PathVariable("userId") Integer userId){
         if(userService.getUserStorage().get(userId) == null){

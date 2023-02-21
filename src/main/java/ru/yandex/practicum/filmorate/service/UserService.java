@@ -9,27 +9,39 @@ import ru.yandex.practicum.filmorate.enums.FeedEventType;
 import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.dao.LikesDao;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Friends;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService {
+    private final FilmsRecommendationService filmsRecommendationService;
     private UserStorage userStorage;
     private Friendship friendship;
-
+    private LikesDao likesDao;
+    private FilmStorage filmStorage;
     private final FeedDao feedDao;
 
     @Autowired
     public UserService(@Qualifier("UserDbStorage")UserStorage userStorage,
                        @Qualifier("FriendshipDaoImplementation")Friendship friendship,
+                       @Qualifier("LikesDao")LikesDao likesDAO,
+                       @Qualifier("FilmDbStorage")FilmStorage filmStorage,
                        FeedDao feedDao){
+        this.feedDao = feedDao;
         this.userStorage = userStorage;
         this.friendship = friendship;
-        this.feedDao = feedDao;
+        this.likesDao = likesDAO;
+        this.filmStorage = filmStorage;
+        filmsRecommendationService = new FilmsRecommendationService();
     }
 
     public User addFriend(Integer userId, Integer friendId){
@@ -74,5 +86,14 @@ public class UserService {
         User user = userStorage.get(userId);
 
         return feedDao.getUserFeed(user.getId());
+    }
+    
+    public List<Film> getFilmRecommendations(Integer userId) {
+        Map <Integer, Map<Integer, Integer>> existingData = likesDao.findLikesForAllUsers();
+        if (!existingData.containsKey(userId)) {
+            return new ArrayList<>();
+        }
+        List<Integer> filmsIds =  filmsRecommendationService.recommendFilmsByUserId(existingData, userId);
+        return filmStorage.getFilmsByIds(filmsIds);
     }
 }

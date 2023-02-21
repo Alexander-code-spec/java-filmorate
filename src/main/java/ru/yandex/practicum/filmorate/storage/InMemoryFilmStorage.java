@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -61,6 +62,35 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
 
     @Override
     public List<Film> getCommonMovies(Integer userId, Integer friendId) {
+      return null;
+    }
+
+    @Override
+    public List<Film> getFilmsByIds(List<Integer> filmsIds) {
+        List<Film> films = new ArrayList<>();
+        for (Integer filmId : filmsIds) {
+            films.add(get(filmId));
+        }
+        return films;
+   }
+   
+   @Override
+   public List<Film> getCommonMovies(Integer userId, Integer friendId) {
+        return null;
+   }
+
+    @Override
+    public List<Film> getDirectorFilmsByYear(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getDirectorFilmsByRating(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<Film> search(String query, boolean isT, boolean isD) {
         return null;
     }
 }

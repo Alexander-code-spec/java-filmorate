@@ -30,7 +30,6 @@ public class ReviewDbStorage implements ReviewStorage {
     private final JdbcTemplate jdbcTemplate;
     private final UserDbStorage userDbStorage;
     private final FilmDbStorage filmDbStorage;
-
     private final FeedDao feedDao;
 
     public ReviewDbStorage(JdbcTemplate jdbcTemplate, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage, FeedDao feedDao) {
@@ -119,6 +118,7 @@ public class ReviewDbStorage implements ReviewStorage {
         String sqlQuery = "delete from Reviews where id = ?";
         jdbcTemplate.update(sqlQuery, review.getReviewId());
         feedDao.addToUserFeed(review.getUserId(), review.getReviewId(), FeedEventType.REVIEW, FeedOperation.REMOVE);
+
         return review;
     }
 

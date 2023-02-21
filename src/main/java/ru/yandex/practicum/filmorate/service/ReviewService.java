@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.dao.ReviewLikesDao;
 import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.enums.FeedEventType;
 import ru.yandex.practicum.filmorate.enums.FeedOperation;
+import ru.yandex.practicum.filmorate.dao.ReviewLikesDao;
+import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -22,7 +24,6 @@ public class ReviewService {
     private final ReviewStorage reviewStorage;
     private final ReviewLikesDao reviewLikesDao;
     private final UserStorage userStorage;
-
     private final FeedDao feedDao;
 
     @Autowired

@@ -66,9 +66,13 @@ public class FilmController{
         return filmService.removeLike(filmService.getFilmStorage().get(id), userId);
     }
 
+    @GetMapping("/director/{directorId}")
+    public List<Film> getByDirectorId(@PathVariable("directorId") Integer directorId, @RequestParam String sortBy) {
+        return filmService.getSortDirector(directorId, sortBy);
+    }
+
     @PutMapping
-    @Validated
-    public Film update(@Valid @RequestBody Film film) throws ValidationException {
+    public Film update(@RequestBody @Valid  Film film) throws ValidationException {
         return filmService.getFilmStorage().update(film);
     }
 
@@ -89,5 +93,11 @@ public class FilmController{
             filmService.getFilmStorage().delete(filmService.getFilmStorage().get(filmId));
         }
         return true;
+    }
+
+    @GetMapping("/search")
+    @ResponseBody
+    public List<Film> search(@RequestParam String query, @RequestParam List<String> by) {
+        return filmService.search(query, by.contains("title"), by.contains("director"));
     }
 }
