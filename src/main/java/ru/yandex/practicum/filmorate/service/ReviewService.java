@@ -3,6 +3,11 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FeedDao;
+import ru.yandex.practicum.filmorate.dao.ReviewLikesDao;
+import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.dao.ReviewLikesDao;
 import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
@@ -19,14 +24,17 @@ public class ReviewService {
     private final ReviewStorage reviewStorage;
     private final ReviewLikesDao reviewLikesDao;
     private final UserStorage userStorage;
+    private final FeedDao feedDao;
 
     @Autowired
     public ReviewService(@Qualifier("ReviewDbStorage") ReviewStorage reviewStorage,
                          @Qualifier("ReviewLikesDao") ReviewLikesDao reviewLikesDao,
-                         @Qualifier("UserDbStorage") UserStorage userStorage){
+                         @Qualifier("UserDbStorage") UserStorage userStorage,
+                         FeedDao feedDao){
         this.reviewStorage = reviewStorage;
         this.reviewLikesDao = reviewLikesDao;
         this.userStorage = userStorage;
+        this.feedDao = feedDao;
     }
 
     public void putLike(Integer reviewId, Integer userId, Integer likeValue) {
@@ -47,6 +55,7 @@ public class ReviewService {
 
         reviewLikesDao.deleteReviewLike(reviewId, userId, likeValue);
     }
+
     public ReviewStorage getReviewStorage() {
         return reviewStorage;
     }

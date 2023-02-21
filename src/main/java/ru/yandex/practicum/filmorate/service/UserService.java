@@ -3,7 +3,12 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FeedDao;
 import ru.yandex.practicum.filmorate.dao.Friendship;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.dao.LikesDao;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -23,13 +28,15 @@ public class UserService {
     private Friendship friendship;
     private LikesDao likesDao;
     private FilmStorage filmStorage;
-
+    private final FeedDao feedDao;
 
     @Autowired
     public UserService(@Qualifier("UserDbStorage")UserStorage userStorage,
                        @Qualifier("FriendshipDaoImplementation")Friendship friendship,
                        @Qualifier("LikesDao")LikesDao likesDAO,
-                       @Qualifier("FilmDbStorage")FilmStorage filmStorage){
+                       @Qualifier("FilmDbStorage")FilmStorage filmStorage,
+                       FeedDao feedDao){
+        this.feedDao = feedDao;
         this.userStorage = userStorage;
         this.friendship = friendship;
         this.likesDao = likesDAO;
@@ -47,6 +54,7 @@ public class UserService {
             throw new ObjectNotFoundException(String.format("Друг с id = %s не найден!", friendId));
         }
         friendship.inviteFriend(user.getId(), friend.getId());
+        feedDao.addToUserFeed(user.getId(), friend.getId(), FeedEventType.FRIEND, FeedOperation.ADD);
 
         return user;
     }
@@ -56,6 +64,7 @@ public class UserService {
             throw new ObjectNotFoundException("id не может быть меньше 0!");
         }
         friendship.deleteFromFriends(userId, friendId);
+        feedDao.addToUserFeed(userId, friendId, FeedEventType.FRIEND, FeedOperation.REMOVE);
 
         return userStorage.get(userId);
     }
@@ -73,6 +82,12 @@ public class UserService {
         return userStorage;
     }
 
+    public List<Feed> getUserFeed(Integer userId) {
+        User user = userStorage.get(userId);
+
+        return feedDao.getUserFeed(user.getId());
+    }
+    
     public List<Film> getFilmRecommendations(Integer userId) {
         Map <Integer, Map<Integer, Integer>> existingData = likesDao.findLikesForAllUsers();
         if (!existingData.containsKey(userId)) {

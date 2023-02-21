@@ -61,6 +61,11 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
     }
 
     @Override
+    public List<Film> getCommonMovies(Integer userId, Integer friendId) {
+      return null;
+    }
+
+    @Override
     public List<Film> getFilmsByIds(List<Integer> filmsIds) {
         List<Film> films = new ArrayList<>();
         for (Integer filmId : filmsIds) {
@@ -69,9 +74,10 @@ public class InMemoryFilmStorage extends AbstractStorage<Film> implements FilmSt
         return films;
    }
    
+   @Override
    public List<Film> getCommonMovies(Integer userId, Integer friendId) {
         return null;
-    }
+   }
 
     @Override
     public List<Film> getDirectorFilmsByYear(Integer id) {

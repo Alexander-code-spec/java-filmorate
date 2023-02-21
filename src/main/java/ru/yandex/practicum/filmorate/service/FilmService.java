@@ -3,8 +3,11 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FeedDao;
 import ru.yandex.practicum.filmorate.dao.DirectorDao;
 import ru.yandex.practicum.filmorate.dao.LikesDao;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.model.Director;
@@ -20,20 +23,24 @@ public class FilmService {
     private final LikesDao likeDao;
     private final UserStorage userStorage;
     private final DirectorDao directorDao;
+    private final FeedDao feedDao;
 
     @Autowired
     public FilmService(@Qualifier("FilmDbStorage")FilmStorage filmStorage,
                        @Qualifier("LikesDao")LikesDao likeDao,
                        @Qualifier("UserDbStorage")UserStorage userStorage,
+                       FeedDao feedDao,
                        DirectorDao directorDao){
         this.filmStorage = filmStorage;
         this.likeDao = likeDao;
         this.userStorage = userStorage;
+        this.feedDao = feedDao;
         this.directorDao = directorDao;
     }
 
     public void putLike(Integer filmId, Integer userId) {
         likeDao.createFilmLike(filmId, userId);
+        feedDao.addToUserFeed(userId, filmId, FeedEventType.LIKE, FeedOperation.ADD);
     }
 
     public Optional<Film> removeLike(Film film, Integer userId){
@@ -44,6 +51,7 @@ public class FilmService {
         }
 
         likeDao.deleteFilmLike(film.getId(), userId);
+        feedDao.addToUserFeed(userId, film.getId(), FeedEventType.LIKE, FeedOperation.REMOVE);
         return Optional.of(film);
     }
 

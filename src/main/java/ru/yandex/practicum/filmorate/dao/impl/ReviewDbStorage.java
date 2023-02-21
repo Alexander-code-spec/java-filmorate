@@ -7,6 +7,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.dao.FeedDao;
+import ru.yandex.practicum.filmorate.enums.FeedEventType;
+import ru.yandex.practicum.filmorate.enums.FeedOperation;
 import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -27,11 +30,13 @@ public class ReviewDbStorage implements ReviewStorage {
     private final JdbcTemplate jdbcTemplate;
     private final UserDbStorage userDbStorage;
     private final FilmDbStorage filmDbStorage;
+    private final FeedDao feedDao;
 
-    public ReviewDbStorage(JdbcTemplate jdbcTemplate, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage) {
+    public ReviewDbStorage(JdbcTemplate jdbcTemplate, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage, FeedDao feedDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.userDbStorage = userDbStorage;
         this.filmDbStorage = filmDbStorage;
+        this.feedDao = feedDao;
     }
 
     @Override
@@ -61,6 +66,8 @@ public class ReviewDbStorage implements ReviewStorage {
 
         review.setReviewId(keyHolder.getKey().intValue());
 
+        feedDao.addToUserFeed(review.getUserId(), review.getReviewId(), FeedEventType.REVIEW, FeedOperation.ADD);
+
         log.debug("Создан объект: {}", review);
 
         return review;
@@ -88,8 +95,12 @@ public class ReviewDbStorage implements ReviewStorage {
                     ", такого объекта не сущесвтует");
         }
         reviewValidation(review);
-        log.info("Обзор с id = {} успешно обновлен", review.getReviewId());
-        return get(review.getReviewId());
+
+        Review updatedReview = get(review.getReviewId());
+        feedDao.addToUserFeed(updatedReview.getUserId(), updatedReview.getReviewId(), FeedEventType.REVIEW, FeedOperation.UPDATE);
+
+        log.info("Обзор с id = {} успешно обновлен", updatedReview.getReviewId());
+        return updatedReview;
     }
 
     @Override
@@ -106,6 +117,8 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review delete(Review review) {
         String sqlQuery = "delete from Reviews where id = ?";
         jdbcTemplate.update(sqlQuery, review.getReviewId());
+        feedDao.addToUserFeed(review.getUserId(), review.getReviewId(), FeedEventType.REVIEW, FeedOperation.REMOVE);
+
         return review;
     }
 
