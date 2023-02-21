@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS  Review_usefuls(
     review_id INTEGER REFERENCES Reviews(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES Users(id) ON DELETE CASCADE,
     useful INTEGER
-    --PRIMARY KEY (review_id, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS Directors(
@@ -43,13 +42,11 @@ CREATE TABLE IF NOT EXISTS Friendship (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     friend_id INTEGER  REFERENCES users(id) ON DELETE CASCADE,
     communication_status BIT DEFAULT(FALSE)
-    --PRIMARY KEY (user_id, friend_id)
 );
 
 CREATE TABLE IF NOT EXISTS Likes(
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     film_id INTEGER REFERENCES films(id) ON DELETE CASCADE
-    --PRIMARY KEY(user_id, film_id)
 );
 
 CREATE TABLE IF NOT EXISTS Genres (
