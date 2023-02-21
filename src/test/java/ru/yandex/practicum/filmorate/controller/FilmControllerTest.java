@@ -32,7 +32,7 @@ class FilmControllerTest {
     public void before(){
         LikesDao likeDao = null;
         UserStorage userStorage = null;
-        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), likeDao, userStorage, null));
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), likeDao, userStorage, null, null));
     }
 
     @BeforeAll
