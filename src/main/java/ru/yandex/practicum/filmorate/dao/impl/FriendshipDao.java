@@ -6,13 +6,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.Friendship;
 import ru.yandex.practicum.filmorate.model.Friends;
-import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @Slf4j

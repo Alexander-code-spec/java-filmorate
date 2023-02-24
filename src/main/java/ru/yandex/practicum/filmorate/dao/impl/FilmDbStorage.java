@@ -16,7 +16,6 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.AbstractStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -26,7 +25,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @Qualifier("FilmDbStorage")
