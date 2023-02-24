@@ -64,14 +64,15 @@ public class Predictor {
             uFreq.put(filmId, 0);
             uPred.put(filmId, 0);
         }
+
         for (Map.Entry<Integer, Map<Integer, Integer>> userData : inputData.entrySet()) {
-            for (Integer j : userData.getValue().keySet()) {
-                for (Integer k : differentEvaluationMatrix.keySet()) {
+            for (Map.Entry<Integer, Integer> j : userData.getValue().entrySet()) {
+                for (Map.Entry<Integer, Map<Integer, Integer>> k : differentEvaluationMatrix.entrySet()) {
                     try {
-                        int predictedValue = differentEvaluationMatrix.get(k).get(j) + userData.getValue().get(j);
-                        int finalValue = predictedValue * evaluationAmountMatrix.get(k).get(j);
-                        uPred.put(k, uPred.get(k) + finalValue);
-                        uFreq.put(k, uFreq.get(k) + evaluationAmountMatrix.get(k).get(j));
+                        int predictedValue = k.getValue().get(j.getKey()) + userData.getValue().get(j.getKey());
+                        int finalValue = predictedValue * evaluationAmountMatrix.get(k.getKey()).get(j.getKey());
+                        uPred.put(k.getKey(), uPred.get(k.getKey()) + finalValue);
+                        uFreq.put(k.getKey(), uFreq.get(k.getKey()) + evaluationAmountMatrix.get(k.getKey()).get(j.getKey()));
                     } catch (NullPointerException ignored) {
                     }
                 }
