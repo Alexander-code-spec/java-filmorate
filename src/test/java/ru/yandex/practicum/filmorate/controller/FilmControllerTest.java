@@ -13,11 +13,10 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class FilmControllerTest {

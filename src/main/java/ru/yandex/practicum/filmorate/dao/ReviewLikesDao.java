@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.dao;
 
-import java.util.List;
-
 public interface ReviewLikesDao {
 
     void createReviewLike(Integer reviewId, Integer userId, Integer likeValue);
