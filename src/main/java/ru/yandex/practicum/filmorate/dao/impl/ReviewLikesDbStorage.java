@@ -9,11 +9,11 @@ import ru.yandex.practicum.filmorate.dao.ReviewLikesDao;
 @Component
 @Slf4j
 @Qualifier("ReviewLikesDao")
-public class ReviewLikesDaoImplementation implements ReviewLikesDao {
+public class ReviewLikesDbStorage implements ReviewLikesDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    public ReviewLikesDaoImplementation(JdbcTemplate jdbcTemplate) {
+    public ReviewLikesDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
