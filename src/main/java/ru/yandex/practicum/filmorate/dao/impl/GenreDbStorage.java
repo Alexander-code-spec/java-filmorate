@@ -17,10 +17,10 @@ import java.util.HashSet;
 
 @Component
 @Slf4j
-public class GenreDaoImplementation implements GenreDao {
+public class GenreDbStorage implements GenreDao {
     private final JdbcTemplate jdbcTemplate;
 
-    public GenreDaoImplementation(JdbcTemplate jdbcTemplate) {
+    public GenreDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

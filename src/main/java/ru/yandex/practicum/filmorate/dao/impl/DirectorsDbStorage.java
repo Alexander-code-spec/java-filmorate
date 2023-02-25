@@ -20,10 +20,10 @@ import java.util.HashSet;
 
 @Component
 @Slf4j
-public class DirectorsDaoImpl implements DirectorDao {
+public class DirectorsDbStorage implements DirectorDao {
     private final JdbcTemplate jdbcTemplate;
 
-    public DirectorsDaoImpl(JdbcTemplate jdbcTemplate) {
+    public DirectorsDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class FeedDaoImplementation implements FeedDao {
+public class FeedDbStorage implements FeedDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public FeedDaoImplementation(JdbcTemplate jdbcTemplate) {
+    public FeedDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

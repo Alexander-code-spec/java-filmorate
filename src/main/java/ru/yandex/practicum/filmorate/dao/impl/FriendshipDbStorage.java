@@ -14,10 +14,10 @@ import java.util.List;
 @Component
 @Slf4j
 @Qualifier("FriendshipDaoImplementation")
-public class FriendshipDao implements Friendship {
+public class FriendshipDbStorage implements Friendship {
     private final JdbcTemplate jdbcTemplate;
 
-    public FriendshipDao(JdbcTemplate jdbcTemplate) {
+    public FriendshipDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

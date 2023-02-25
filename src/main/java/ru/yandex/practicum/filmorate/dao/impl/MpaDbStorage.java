@@ -16,10 +16,10 @@ import java.util.Optional;
 
 @Component
 @Slf4j
-public class MpaImplementation implements MpaDao {
+public class MpaDbStorage implements MpaDao {
     private final JdbcTemplate jdbcTemplate;
 
-    public MpaImplementation(JdbcTemplate jdbcTemplate) {
+    public MpaDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -16,10 +16,10 @@ import java.util.Map;
 @Component
 @Slf4j
 @Qualifier("LikesDao")
-public class LikesDaoImplementation implements LikesDao {
+public class LikesDbStorage implements LikesDao {
     private JdbcTemplate jdbcTemplate;
 
-    public LikesDaoImplementation(JdbcTemplate jdbcTemplate) {
+    public LikesDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
