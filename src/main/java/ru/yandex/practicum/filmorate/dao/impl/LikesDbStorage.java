@@ -9,15 +9,17 @@ import ru.yandex.practicum.filmorate.model.Likes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
 @Qualifier("LikesDao")
-public class LikesDaoImplementation implements LikesDao {
+public class LikesDbStorage implements LikesDao {
     private JdbcTemplate jdbcTemplate;
 
-    public LikesDaoImplementation(JdbcTemplate jdbcTemplate) {
+    public LikesDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -39,6 +41,21 @@ public class LikesDaoImplementation implements LikesDao {
         log.info("Выполняется запрос всех пользователей из базы");
 
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> createLikes(rs).getUser_id());
+    }
+
+    @Override
+    public Map <Integer, Map<Integer, Integer>> findLikesForAllUsers() {
+        Map <Integer, Map<Integer, Integer>> existingData = new HashMap<>();
+        final String sqlQuery =
+                "select * " +
+                "from likes ";
+        jdbcTemplate.query(sqlQuery, rs -> {
+            int userId = rs.getInt(1);
+            int filmId = rs.getInt(2);
+
+            existingData.computeIfAbsent(userId, k -> new HashMap<>()).put(filmId, 1);
+        });
+        return existingData;
     }
 
     private Likes createLikes(ResultSet likeRows) throws SQLException {

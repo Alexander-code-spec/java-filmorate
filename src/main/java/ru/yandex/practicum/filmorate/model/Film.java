@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -32,4 +32,6 @@ public class Film {
     private Mpa mpa;
     @Builder.Default
     private Set<Genre> genres = new HashSet<>();
+    @Builder.Default
+    private Set<Director> directors = new HashSet<>();
 }

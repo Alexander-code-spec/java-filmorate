@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -83,7 +83,7 @@ public class UserDbStorage  implements UserStorage {
 
     @Override
     public User delete(User user) {
-        String sqlQuery = "delete from users where id = ? cascade";
+        String sqlQuery = "delete from users where id = ?";
         jdbcTemplate.update(sqlQuery, user.getId());
         return user;
     }

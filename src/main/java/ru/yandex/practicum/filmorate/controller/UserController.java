@@ -2,11 +2,12 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -79,6 +80,30 @@ public class UserController {
     public Boolean deleteUser(@Valid @RequestBody User user){
         if(userService.getUserStorage().delete(user) == null){
             throw new ObjectNotFoundException("Пользователь не существует!");
+        }
+        return true;
+    }
+
+    @GetMapping("{id}/feed")
+    public List<Feed> getUserFeed(@PathVariable Integer id) {
+        if (id == null) {
+            return null;
+        }
+        return userService.getUserFeed(id);
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getFilmRecommendations(@PathVariable ("id") Integer id) {
+        return userService.getFilmRecommendations(id);
+    }
+    
+    @DeleteMapping("/{userId}")
+    public Boolean deleteUserById(@PathVariable("userId") Integer userId){
+        if(userService.getUserStorage().get(userId) == null){
+            throw new ObjectNotFoundException("Пользователь не существует!");
+        }
+        else {
+            userService.getUserStorage().delete(userService.getUserStorage().get(userId));
         }
         return true;
     }

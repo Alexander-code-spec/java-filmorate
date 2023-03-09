@@ -4,20 +4,19 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.dao.LikesDao;
+import ru.yandex.practicum.filmorate.dao.impl.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class FilmControllerTest {
@@ -32,7 +31,7 @@ class FilmControllerTest {
     public void before(){
         LikesDao likeDao = null;
         UserStorage userStorage = null;
-        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), likeDao, userStorage));
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), likeDao, userStorage, null, null));
     }
 
     @BeforeAll
